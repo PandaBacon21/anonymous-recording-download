@@ -1,0 +1,7 @@
+.venv/
+.env
+**/__pycache__
+sts_app.db  
+
+token.db
+voicemails/
