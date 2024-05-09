@@ -7,6 +7,7 @@ from utils.get_token import token
 
 load_dotenv()
 
+TARGET_EMAIL = os.environ.get('TARGET_EMAIL')
 VOICEMAIL_DOWNLOAD_LOCATION = os.environ.get('VOICEMAIL_DOWNLOAD_LOCATION')
 # retrieve the access token
 ACCESS_TOKEN = token()
@@ -17,7 +18,6 @@ headers = {
         'authorization': f'Bearer {ACCESS_TOKEN}'
     }
 
-
 def get_user():
     endpoint = '/users'
     full_url = base_url+endpoint
@@ -26,10 +26,8 @@ def get_user():
     print(f'endpoint: {endpoint}, status code: {response.status_code}')
 
     r_content = json.loads(response.content)
-
-    
-    target = next((item for item in r_content['users'] if item['email'] == 'josh.aiken@zoomineer.com'), None)
-    print(f"userId: {target['id']}")
+    target = next((item for item in r_content['users'] if item['email'] == TARGET_EMAIL), None)
+    # print(f"userId: {target['id']}")
     return(target['id'])
 
 def get_user_voicemail(userId):
@@ -40,7 +38,6 @@ def get_user_voicemail(userId):
     print(f'endpoint: {endpoint}, status code: {response.status_code}')
 
     r_content = json.loads(response.content)
-
     return r_content['voice_mails']
 
 def get_anonymous_auto_receptionist_voicemail(voicemail_array):
@@ -48,7 +45,7 @@ def get_anonymous_auto_receptionist_voicemail(voicemail_array):
     for item in voicemail_array: 
         if item['callee_name'] == 'Anonymous Tip Line AR': 
             anonymous_auto_receptionist_voicemails.append({'date_time':item['date_time'], 'download_url':item['download_url']})
-    print(f'download urls: {anonymous_auto_receptionist_voicemails}')
+    # print(f'download urls: {anonymous_auto_receptionist_voicemails}')
     return anonymous_auto_receptionist_voicemails
 
 def download_voicemails(recording_url_array):
@@ -60,8 +57,7 @@ def download_voicemails(recording_url_array):
         response = requests.get(url['download_url'], headers=headers)
         with open(full_filename, 'wb') as f: 
             f.write(response.content)
-            print(f'Recording {file_name} download complete')
-
+            print(f'Recording {file_name}: download complete')
 
 def main(): 
     userId = get_user()
