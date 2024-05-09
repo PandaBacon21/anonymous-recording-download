@@ -8,6 +8,7 @@ from utils.get_token import token
 load_dotenv()
 
 TARGET_EMAIL = os.environ.get('TARGET_EMAIL')
+TARGET_AUTO_RECEPTIONIST = os.environ.get('TARGET_AUTO_RECEPTIONIST')
 VOICEMAIL_DOWNLOAD_LOCATION = os.environ.get('VOICEMAIL_DOWNLOAD_LOCATION')
 # retrieve the access token
 ACCESS_TOKEN = token()
@@ -43,7 +44,7 @@ def get_user_voicemail(userId):
 def get_anonymous_auto_receptionist_voicemail(voicemail_array):
     anonymous_auto_receptionist_voicemails = []
     for item in voicemail_array: 
-        if item['callee_name'] == 'Anonymous Tip Line AR': 
+        if item['callee_name'] == TARGET_AUTO_RECEPTIONIST: 
             anonymous_auto_receptionist_voicemails.append({'date_time':item['date_time'], 'download_url':item['download_url']})
     # print(f'download urls: {anonymous_auto_receptionist_voicemails}')
     return anonymous_auto_receptionist_voicemails
