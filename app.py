@@ -7,22 +7,22 @@ from utils.get_token import token
 
 load_dotenv()
 
-TARGET_EMAIL = os.environ.get('TARGET_EMAIL')
-TARGET_AUTO_RECEPTIONIST = os.environ.get('TARGET_AUTO_RECEPTIONIST')
-VOICEMAIL_DOWNLOAD_LOCATION = os.environ.get('VOICEMAIL_DOWNLOAD_LOCATION')
 # retrieve the access token
 ACCESS_TOKEN = token()
 
-base_url = 'https://api.zoom.us/v2'
-headers = {
+TARGET_EMAIL = os.environ.get('TARGET_EMAIL')
+TARGET_AUTO_RECEPTIONIST = os.environ.get('TARGET_AUTO_RECEPTIONIST')
+VOICEMAIL_DOWNLOAD_LOCATION = os.environ.get('VOICEMAIL_DOWNLOAD_LOCATION')
+BASE_URL = 'https://api.zoom.us/v2'
+HEADERS = {
         'content-type': 'application/json',
         'authorization': f'Bearer {ACCESS_TOKEN}'
     }
 
 def get_user():
     endpoint = '/users'
-    full_url = base_url+endpoint
-    response = requests.get(url=full_url, headers=headers)
+    full_url = BASE_URL+endpoint
+    response = requests.get(url=full_url, headers=HEADERS)
 
     print(f'endpoint: {endpoint}, status code: {response.status_code}')
 
@@ -33,8 +33,8 @@ def get_user():
 
 def get_user_voicemail(userId):
     endpoint = f'/phone/users/{userId}/voice_mails'
-    full_url = base_url+endpoint
-    response = requests.get(url=full_url, headers=headers)
+    full_url = BASE_URL+endpoint
+    response = requests.get(url=full_url, headers=HEADERS)
 
     print(f'endpoint: {endpoint}, status code: {response.status_code}')
 
@@ -55,7 +55,7 @@ def download_voicemails(recording_url_array):
     for url in recording_url_array:
         file_name = f"{url['date_time']}.mp3"
         full_filename = f'{download_dir}/{file_name}'
-        response = requests.get(url['download_url'], headers=headers)
+        response = requests.get(url['download_url'], headers=HEADERS)
         with open(full_filename, 'wb') as f: 
             f.write(response.content)
             print(f'Recording {file_name}: download complete')
