@@ -28,6 +28,16 @@ Once your virtual environment is created and activated, install project dependen
 pip install -r requirements.txt
 ```
 
+You will need to create a Zoom Server-to-Server OAuth app in order to gain credentials required and define scopes needed. Please see instructions [here](https://developers.zoom.us/docs/internal-apps/s2s-oauth/).
+
+You will also need to create (if not done already) an [Auto Receptionist](https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0061421) in your Zoom Phone Admin Portal that sends all calls directly to voicemail on the current extention 24/7. 
+
+You will then need to give a specific user access to [voicemails](https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0069406#h_f2297d99-00de-4a28-92cd-c0831066c555) for that specific auto receptionist. Currently, Zoom does not allow for pulling voicemails for auto receptionists or call queues directly via API, so you will do so by retrieving voicemails for a specific users, and then parsing out only the voicemails for that particular auto receptionist. 
+
+The ```TARGET_EMAIL``` below will be the email address of the user with access to that particular auto receptionist.
+The ```TARGET_AUTO_RECEPTIONIST``` below will be the name of the particular auto receptionist you need to retrieve the voicemails for. 
+
+
 Create ```.env``` file to save sensitive variables
 
 ```
@@ -36,8 +46,10 @@ CLIENT_ID = 'YourZoomClientId'
 CLIENT_SECRET = 'YourZoomClientSecret'
 DB_LOCATION = 'PathToYourDataBase'
 TARGET_EMAIL = 'EmailOfZoomUserWithVoicemailBoxAccess'
+TARGET_AUTO_RECEPTIONIST = 'NameofAutoReceptionistToReceiveVoicemails'
 VOICEMAIL_DOWNLOAD_LOCATION = 'LocationOfVoicemailStorageDirectory'
 ```
 
-I just used a sqlite database to store the access token as to not have to continuely request a token every time this script runs, but you can choose to handle that however you'd like. 
+I just used a sqlite database to store the access token as to not have to continuely request a token every time this script runs, but you can choose to handle that however you'd like.
 
+Lastly, you could go another step further and set up a specific Site for this Auto Receptionist and under the Site Policy Settings, you can chose to auto delete the call logs and voicemails after a set retention period. This can be set to delete after a single day for example, allowing you to schedule the retreival via the API prior to deletion to ensure no call history or voicemail remains within Zoom. By default, these retention periods are set to an unlimited time frame. 
